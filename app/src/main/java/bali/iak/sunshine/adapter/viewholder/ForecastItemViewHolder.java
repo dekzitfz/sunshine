@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import bali.iak.sunshine.R;
-import bali.iak.sunshine.model.ListItem;
+import bali.iak.sunshine.model.DummyForecast;
 import bali.iak.sunshine.utilities.SunshineWeatherUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,21 +29,19 @@ public class ForecastItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this,itemView);
     }
 
-    public void bind(final ListItem data, Context context){
+    public void bind(final DummyForecast data, Context context){
         weatherIcon.setImageResource(
                 SunshineWeatherUtils
-                        .getSmallArtResourceIdForWeatherCondition(
-                                data.getWeather().get(0).getId()
-                        )
+                        .getSmallArtResourceIdForWeatherCondition(data.getWeatherId())
         );
 
-        date.setText(data.getReadableTime());
-        weatherDescription.setText(data.getWeather().get(0).getDescription());
+        date.setText(data.getDate());
+        weatherDescription.setText(data.getWeatherDescription());
         highTemp.setText(
-                SunshineWeatherUtils.formatTemperature(context,data.getTemp().getMax())
+                SunshineWeatherUtils.formatTemperature(context, Double.parseDouble(data.getHighTemperature()))
         );
         lowTemp.setText(
-                SunshineWeatherUtils.formatTemperature(context,data.getTemp().getMin())
+                SunshineWeatherUtils.formatTemperature(context, Double.parseDouble(data.getLowTemperature()))
         );
     }
 }

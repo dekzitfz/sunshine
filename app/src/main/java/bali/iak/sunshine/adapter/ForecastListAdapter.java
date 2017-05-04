@@ -10,7 +10,7 @@ import java.util.List;
 
 import bali.iak.sunshine.R;
 import bali.iak.sunshine.adapter.viewholder.ForecastItemViewHolder;
-import bali.iak.sunshine.model.ListItem;
+import bali.iak.sunshine.model.DummyForecast;
 
 /**
  * Created by DEKZ on 5/3/2017.
@@ -18,10 +18,10 @@ import bali.iak.sunshine.model.ListItem;
 
 public class ForecastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ListItem> data = new ArrayList<>();
+    private List<DummyForecast> data = new ArrayList<>();
     private Context context;
 
-    public ForecastListAdapter(List<ListItem> data, Context context) {
+    public ForecastListAdapter(List<DummyForecast> data, Context context) {
         this.data = data;
         this.context = context;
     }

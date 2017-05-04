@@ -8,8 +8,8 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_forecast"
-        android:layout_width="368dp"
-        android:layout_height="495dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"

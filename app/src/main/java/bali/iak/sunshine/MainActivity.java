@@ -1,40 +1,29 @@
 package bali.iak.sunshine;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import bali.iak.sunshine.adapter.ForecastListAdapter;
-import bali.iak.sunshine.model.DailyForecast;
-import bali.iak.sunshine.model.ListItem;
+import bali.iak.sunshine.model.DummyForecast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    // TES TES
     @BindView(R.id.rv_forecast)RecyclerView rvForecast;
 
     private ForecastListAdapter forecastListAdapter;
-    private List<ListItem> forecastData = new ArrayList<>();
+    private List<DummyForecast> forecastData = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,50 +35,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupData(){
-        forecastListAdapter = new ForecastListAdapter(forecastData,MainActivity.this);
+        forecastListAdapter = new ForecastListAdapter(forecastData, MainActivity.this);
         rvForecast.setLayoutManager(new LinearLayoutManager(this));
         rvForecast.setAdapter(forecastListAdapter);
-
         getData();
     }
 
     private void getData(){
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        DummyForecast dummyForecast1 = new DummyForecast("Sunday, 7 May", "Sunny", "47", "37", 955);
+        DummyForecast dummyForecast2 = new DummyForecast("Monday, 8 May", "Foggy", "33", "39", 702);
+        DummyForecast dummyForecast3 = new DummyForecast("Tuesday, 9 May", "Foggy", "48", "40", 702);
+        DummyForecast dummyForecast4 = new DummyForecast("Wednesday, 10 May", "Sunny", "35", "27", 955);
+        DummyForecast dummyForecast5 = new DummyForecast("Thursday, 11 May", "Rainy", "40", "34", 505);
+        DummyForecast dummyForecast6 = new DummyForecast("Friday, 12 May", "Sunny", "47", "35", 955);
+        DummyForecast dummyForecast7 = new DummyForecast("Saturday, 13 May", "Sunny", "40", "32", 955);
 
-        final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=-8.650000&lon=115.216667&cnt=16&appid=83003ca00bb8eec11d7976f5ee0282fd&units=metric";
+        forecastData.add(dummyForecast1);
+        forecastData.add(dummyForecast2);
+        forecastData.add(dummyForecast3);
+        forecastData.add(dummyForecast4);
+        forecastData.add(dummyForecast5);
+        forecastData.add(dummyForecast6);
+        forecastData.add(dummyForecast7);
 
-        StringRequest request = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG,"response RECEIVED!!!");
-                        Log.i(TAG,response);
-                        Gson gson = new Gson();
-                        try {
-                            DailyForecast dailyForecast = gson.fromJson(response,DailyForecast.class);
-                            for(ListItem item : dailyForecast.getList()){
-                                forecastData.add(item);
-                            }
-                            forecastListAdapter.notifyDataSetChanged();
-                        }catch (Exception e){
-                            Log.e(TAG,e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error!=null){
-                            Log.e(TAG,error.getMessage());
-                        }else{
-                            Log.e(TAG,"Something wrong happened");
-                        }
-                    }
-                });
-
-        requestQueue.add(request);
+        forecastListAdapter.notifyDataSetChanged();
     }
 
     @Override
