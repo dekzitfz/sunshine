@@ -29,7 +29,7 @@ public class ForecastItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this,itemView);
     }
 
-    public void bind(final ListItem data, Context context){
+    public void bind(final ListItem data, Context context, int pos){
         weatherIcon.setImageResource(
                 SunshineWeatherUtils
                         .getSmallArtResourceIdForWeatherCondition(
@@ -37,7 +37,7 @@ public class ForecastItemViewHolder extends RecyclerView.ViewHolder {
                         )
         );
 
-        date.setText(data.getReadableTime());
+        date.setText(data.getReadableTime(pos));
         weatherDescription.setText(data.getWeather().get(0).getDescription());
         highTemp.setText(
                 SunshineWeatherUtils.formatTemperature(context,data.getTemp().getMax())

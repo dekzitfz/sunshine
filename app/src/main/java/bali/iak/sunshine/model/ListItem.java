@@ -125,11 +125,15 @@ public class ListItem{
 			"}";
 	}
 
-	public String getReadableTime(){
-		Date date = new Date(dt * 1000L);
-		DateFormat format = new SimpleDateFormat("EEEE");
-		format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
-		return format.format(date);
+	public String getReadableTime(int pos){
+		if(pos == 1){
+			return "Tomorrow";
+		}else{
+			Date date = new Date(dt * 1000L);
+			DateFormat format = new SimpleDateFormat("EEEE");
+			format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+			return format.format(date);
+		}
 	}
 
 	public String getTodayReadableTime(){

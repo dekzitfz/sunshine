@@ -46,7 +46,7 @@ public class ForecastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if(type == VIEW_TODAY){
             ((TodayForecastViewHolder)holder).bind(data.get(position),context);
         }else{
-            ((ForecastItemViewHolder)holder).bind(data.get(position),context);
+            ((ForecastItemViewHolder)holder).bind(data.get(position),context,position);
         }
     }
 
