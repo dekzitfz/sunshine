@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
 
+    // TES TES
     @BindView(R.id.rv_forecast)RecyclerView rvForecast;
 
     private ForecastListAdapter forecastListAdapter;
