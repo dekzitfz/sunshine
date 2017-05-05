@@ -1,6 +1,8 @@
 package bali.iak.sunshine;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,8 @@ import java.util.List;
 
 import bali.iak.sunshine.adapter.ForecastListAdapter;
 import bali.iak.sunshine.adapter.OnclickListener;
+import bali.iak.sunshine.database.ForecastContract;
+import bali.iak.sunshine.database.ForecastDBHelper;
 import bali.iak.sunshine.model.DailyForecast;
 import bali.iak.sunshine.model.ListItem;
 import butterknife.BindView;
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
     private ForecastListAdapter forecastListAdapter;
     private List<ListItem> forecastData = new ArrayList<>();
     private Gson gson = new Gson();
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                             forecastListAdapter.notifyDataSetChanged();
 
                             forecastListAdapter.setClickListener(MainActivity.this);
+                            saveForecastToDB();
                         }catch (Exception e){
                             Log.e(TAG,e.getMessage());
                         }
@@ -125,5 +131,14 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         detail.putExtra("data", gson.toJson(data));
         detail.putExtra("position", position);
         startActivity(detail);
+    }
+
+    private void saveForecastToDB() {
+        ForecastDBHelper dbHelper = new ForecastDBHelper(this);
+        db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(ForecastContract.ForecastEntry.COLUMN_WEATHER_DESCRIPTION, forecastData.get(0).getWeather().get(0).getDescription());
+        long insertRresult = db.insert(ForecastContract.ForecastEntry.TABLE_NAME, null, cv);
+        Log.d(TAG, "insertResult -> " + insertRresult);
     }
 }
