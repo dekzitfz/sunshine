@@ -19,14 +19,19 @@ import bali.iak.sunshine.model.ListItem;
 
 public class ForecastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ListItem> data = new ArrayList<>();
-    private Context context;
     private static final int VIEW_TODAY = 0;
     private static final int VIEW_NEXTDAY = 1;
+    private List<ListItem> data = new ArrayList<>();
+    private Context context;
+    private OnclickListener clickListener;
 
     public ForecastListAdapter(List<ListItem> data, Context context) {
         this.data = data;
         this.context = context;
+    }
+
+    public void setClickListener(OnclickListener clickListener) {
+        this.clickListener = clickListener;
     }
 
     @Override
@@ -44,9 +49,9 @@ public class ForecastListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final int type = getItemViewType(position);
         if(type == VIEW_TODAY){
-            ((TodayForecastViewHolder)holder).bind(data.get(position),context);
+            ((TodayForecastViewHolder) holder).bind(data.get(position), context, clickListener);
         }else{
-            ((ForecastItemViewHolder)holder).bind(data.get(position),context,position);
+            ((ForecastItemViewHolder) holder).bind(data.get(position), context, position, clickListener);
         }
     }
 

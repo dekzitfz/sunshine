@@ -1,12 +1,12 @@
 package bali.iak.sunshine.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import com.google.gson.annotations.SerializedName;
 
 public class ListItem{
 
@@ -37,76 +37,76 @@ public class ListItem{
 	@SerializedName("speed")
 	private double speed;
 
-	public void setDt(int dt){
-		this.dt = dt;
-	}
-
 	public long getDt(){
 		return dt;
 	}
 
-	public void setRain(double rain){
-		this.rain = rain;
+	public void setDt(int dt) {
+		this.dt = dt;
 	}
 
 	public double getRain(){
 		return rain;
 	}
 
-	public void setTemp(Temp temp){
-		this.temp = temp;
+	public void setRain(double rain) {
+		this.rain = rain;
 	}
 
 	public Temp getTemp(){
 		return temp;
 	}
 
-	public void setDeg(int deg){
-		this.deg = deg;
+	public void setTemp(Temp temp) {
+		this.temp = temp;
 	}
 
 	public int getDeg(){
 		return deg;
 	}
 
-	public void setWeather(List<WeatherItem> weather){
-		this.weather = weather;
+	public void setDeg(int deg) {
+		this.deg = deg;
 	}
 
 	public List<WeatherItem> getWeather(){
 		return weather;
 	}
 
-	public void setHumidity(int humidity){
-		this.humidity = humidity;
+	public void setWeather(List<WeatherItem> weather) {
+		this.weather = weather;
 	}
 
 	public int getHumidity(){
 		return humidity;
 	}
 
-	public void setPressure(double pressure){
-		this.pressure = pressure;
+	public void setHumidity(int humidity) {
+		this.humidity = humidity;
 	}
 
 	public double getPressure(){
 		return pressure;
 	}
 
-	public void setClouds(int clouds){
-		this.clouds = clouds;
+	public void setPressure(double pressure) {
+		this.pressure = pressure;
 	}
 
 	public int getClouds(){
 		return clouds;
 	}
 
-	public void setSpeed(double speed){
-		this.speed = speed;
+	public void setClouds(int clouds) {
+		this.clouds = clouds;
 	}
 
 	public double getSpeed(){
 		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
 	}
 
 	@Override
@@ -140,5 +140,17 @@ public class ListItem{
 		Date date = new Date(dt * 1000L);
 		DateFormat format = new SimpleDateFormat("MMM dd");
 		return "Today, "+format.format(date);
+	}
+
+	public String getReadableHumidity() {
+		return humidity + " %";
+	}
+
+	public String getReadablePressure() {
+		return Math.round(pressure) + " hPa";
+	}
+
+	public String getReadableWindSpeed() {
+		return Math.round(speed) + " m/sec";
 	}
 }

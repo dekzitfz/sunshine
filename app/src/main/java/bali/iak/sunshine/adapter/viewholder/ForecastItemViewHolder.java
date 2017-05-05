@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import bali.iak.sunshine.R;
+import bali.iak.sunshine.adapter.OnclickListener;
 import bali.iak.sunshine.model.ListItem;
 import bali.iak.sunshine.utilities.SunshineWeatherUtils;
 import butterknife.BindView;
@@ -29,7 +30,7 @@ public class ForecastItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this,itemView);
     }
 
-    public void bind(final ListItem data, Context context, int pos){
+    public void bind(final ListItem data, Context context, final int pos, final OnclickListener listener) {
         weatherIcon.setImageResource(
                 SunshineWeatherUtils
                         .getSmallArtResourceIdForWeatherCondition(
@@ -45,5 +46,12 @@ public class ForecastItemViewHolder extends RecyclerView.ViewHolder {
         lowTemp.setText(
                 SunshineWeatherUtils.formatTemperature(context,data.getTemp().getMin())
         );
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(data, pos);
+            }
+        });
     }
 }
