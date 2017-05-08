@@ -47,11 +47,13 @@ public class TodayForecastViewHolder extends RecyclerView.ViewHolder {
                 SunshineWeatherUtils.formatTemperature(context,data.getTemp().getMin())
         );
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onItemClick(data, 0);
-            }
-        });
+        if (listener != null) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(data, 0);
+                }
+            });
+        }
     }
 }
