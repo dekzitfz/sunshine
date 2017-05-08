@@ -1,6 +1,5 @@
 package bali.iak.sunshine;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import java.util.List;
 
 import bali.iak.sunshine.adapter.ForecastListAdapter;
 import bali.iak.sunshine.adapter.OnclickListener;
-import bali.iak.sunshine.database.ForecastContract;
 import bali.iak.sunshine.database.ForecastDBHelper;
 import bali.iak.sunshine.model.DailyForecast;
 import bali.iak.sunshine.model.ListItem;
@@ -44,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
     private List<ListItem> forecastData = new ArrayList<>();
     private Gson gson = new Gson();
     private SQLiteDatabase db;
+    private DailyForecast dailyForecast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                         Log.i(TAG,response);
                         forecastData.clear();
                         try {
-                            DailyForecast dailyForecast = gson.fromJson(response,DailyForecast.class);
+                            dailyForecast = gson.fromJson(response, DailyForecast.class);
                             for(ListItem item : dailyForecast.getList()){
                                 forecastData.add(item);
                             }
@@ -135,10 +134,8 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
 
     private void saveForecastToDB() {
         ForecastDBHelper dbHelper = new ForecastDBHelper(this);
-        db = dbHelper.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(ForecastContract.ForecastEntry.COLUMN_WEATHER_DESCRIPTION, forecastData.get(0).getWeather().get(0).getDescription());
-        long insertRresult = db.insert(ForecastContract.ForecastEntry.TABLE_NAME, null, cv);
-        Log.d(TAG, "insertResult -> " + insertRresult);
+        for (ListItem item : dailyForecast.getList()) {
+            dbHelper.saveForecast(dailyForecast.getCity(), item);
+        }
     }
 }
