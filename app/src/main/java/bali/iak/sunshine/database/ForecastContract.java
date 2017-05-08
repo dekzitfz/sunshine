@@ -31,7 +31,6 @@ public class ForecastContract {
         public static final String COLUMN_WEATHER_ICON = "weather_icon";
         public static final String COLUMN_WIND_SPEED = "wind_speed";
 
-
         //additional info
         public static final String COLUMN_TIMESTAMP = "timestamp";
     }

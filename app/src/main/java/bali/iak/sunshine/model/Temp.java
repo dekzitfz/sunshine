@@ -22,52 +22,52 @@ public class Temp{
 	@SerializedName("morn")
 	private double morn;
 
-	public void setMin(double min){
-		this.min = min;
-	}
-
 	public double getMin(){
 		return min;
 	}
 
-	public void setMax(int max){
-		this.max = max;
+	public void setMin(double min) {
+		this.min = min;
 	}
 
 	public double getMax(){
 		return max;
 	}
 
-	public void setEve(int eve){
-		this.eve = eve;
+	public void setMax(double max) {
+		this.max = max;
 	}
 
 	public double getEve(){
 		return eve;
 	}
 
-	public void setNight(double night){
-		this.night = night;
+	public void setEve(int eve) {
+		this.eve = eve;
 	}
 
 	public double getNight(){
 		return night;
 	}
 
-	public void setDay(int day){
-		this.day = day;
+	public void setNight(double night) {
+		this.night = night;
 	}
 
 	public double getDay(){
 		return day;
 	}
 
-	public void setMorn(int morn){
-		this.morn = morn;
+	public void setDay(int day) {
+		this.day = day;
 	}
 
 	public double getMorn(){
 		return morn;
+	}
+
+	public void setMorn(int morn) {
+		this.morn = morn;
 	}
 
 	@Override

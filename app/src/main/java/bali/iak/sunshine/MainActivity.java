@@ -1,7 +1,6 @@
 package bali.iak.sunshine;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
     private ForecastListAdapter forecastListAdapter;
     private List<ListItem> forecastData = new ArrayList<>();
     private Gson gson = new Gson();
-    private SQLiteDatabase db;
+    private ForecastDBHelper dbHelper;
     private DailyForecast dailyForecast;
 
     @Override
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         rvForecast.setLayoutManager(new LinearLayoutManager(this));
         rvForecast.setAdapter(forecastListAdapter);
 
+        dbHelper = new ForecastDBHelper(this);
         getData();
     }
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                             forecastListAdapter.notifyDataSetChanged();
 
                             forecastListAdapter.setClickListener(MainActivity.this);
-                            saveForecastToDB();
+                            saveForecastToDB(dailyForecast);
                         }catch (Exception e){
                             Log.e(TAG,e.getMessage());
                         }
@@ -106,11 +106,18 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        updateView("error");
-                        if(error!=null){
-                            Log.e(TAG,error.getMessage());
+                        if (dbHelper.isDataAlreadyExist("Denpasar")) {
+                            //data denpasar is exist on sqlite
+                            dailyForecast = dbHelper.getSavedForecast("Denpasar");
+                            showDataFromDB(dailyForecast);
                         }else{
-                            Log.e(TAG,"Something wrong happened");
+                            //data denpasar is not available on sqlite
+                            updateView("error");
+                            if (error != null) {
+                                Log.e(TAG, error.getMessage());
+                            } else {
+                                Log.e(TAG, "Something wrong happened");
+                            }
                         }
                     }
                 });
@@ -130,6 +137,8 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         int id = item.getItemId();
         if(id == R.id.action_settings){
             startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+            /*dailyForecast = dbHelper.getSavedForecast("Denpasar");
+            showDataFromDB(dailyForecast);*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -142,10 +151,17 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         startActivity(detail);
     }
 
-    private void saveForecastToDB() {
-        ForecastDBHelper dbHelper = new ForecastDBHelper(this);
-        for (ListItem item : dailyForecast.getList()) {
-            dbHelper.saveForecast(dailyForecast.getCity(), item);
+    private void saveForecastToDB(DailyForecast data) {
+        if (!dbHelper.isDataAlreadyExist("Denpasar")) {
+            //data forecast denpasar not available on db, insert new
+            for (ListItem item : data.getList()) {
+                dbHelper.saveForecast(data.getCity(), item);
+            }
+        } else {
+            //data forecast denpasar already exist on db, update it with brand new data
+            for (ListItem item : data.getList()) {
+                dbHelper.updateData(data.getCity(), item);
+            }
         }
     }
 
@@ -163,5 +179,14 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
             rvForecast.setVisibility(View.VISIBLE);
             errorView.setVisibility(View.GONE);
         }
+    }
+
+    private void showDataFromDB(DailyForecast data) {
+        forecastData.clear();
+        for (ListItem item : data.getList()) {
+            forecastData.add(item);
+        }
+        forecastListAdapter.notifyDataSetChanged();
+        updateView("complete");
     }
 }
