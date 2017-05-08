@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -37,6 +40,10 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
 
     // TES TES
     @BindView(R.id.rv_forecast)RecyclerView rvForecast;
+    @BindView(R.id.pb_forecast)
+    ProgressBar pb;
+    @BindView(R.id.tv_error)
+    TextView errorView;
 
     private ForecastListAdapter forecastListAdapter;
     private List<ListItem> forecastData = new ArrayList<>();
@@ -67,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
     }
 
     private void getData(){
+        updateView("loading");
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=-8.650000&lon=115.216667&cnt=16&appid=83003ca00bb8eec11d7976f5ee0282fd&units=metric";
@@ -77,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        updateView("complete");
                         Log.d(TAG,"response RECEIVED!!!");
                         Log.i(TAG,response);
                         forecastData.clear();
@@ -97,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        updateView("error");
                         if(error!=null){
                             Log.e(TAG,error.getMessage());
                         }else{
@@ -136,6 +146,22 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         ForecastDBHelper dbHelper = new ForecastDBHelper(this);
         for (ListItem item : dailyForecast.getList()) {
             dbHelper.saveForecast(dailyForecast.getCity(), item);
+        }
+    }
+
+    private void updateView(String state) {
+        if (state.equals("loading")) {
+            pb.setVisibility(View.VISIBLE);
+            rvForecast.setVisibility(View.GONE);
+            errorView.setVisibility(View.GONE);
+        } else if (state.equals("error")) {
+            pb.setVisibility(View.GONE);
+            rvForecast.setVisibility(View.GONE);
+            errorView.setVisibility(View.VISIBLE);
+        } else {
+            pb.setVisibility(View.GONE);
+            rvForecast.setVisibility(View.VISIBLE);
+            errorView.setVisibility(View.GONE);
         }
     }
 }
