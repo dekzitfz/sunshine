@@ -36,6 +36,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements OnclickListener {
 
     private final static String TAG = MainActivity.class.getSimpleName();
+    private static final String cityTarget = "Denpasar";
 
     // TES TES
     @BindView(R.id.rv_forecast)RecyclerView rvForecast;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         updateView("loading");
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=-8.650000&lon=115.216667&cnt=16&appid=83003ca00bb8eec11d7976f5ee0282fd&units=metric";
+        final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=16&appid=83003ca00bb8eec11d7976f5ee0282fd&units=metric&q=" + cityTarget;
 
         StringRequest request = new StringRequest(
                 Request.Method.GET,
@@ -106,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        if (dbHelper.isDataAlreadyExist("Denpasar")) {
-                            //data denpasar is exist on sqlite
-                            dailyForecast = dbHelper.getSavedForecast("Denpasar");
+                        if (dbHelper.isDataAlreadyExist(cityTarget)) {
+                            //data denpasar is exist on sqlite, show it
+                            dailyForecast = dbHelper.getSavedForecast(cityTarget);
                             showDataFromDB(dailyForecast);
                         }else{
                             //data denpasar is not available on sqlite
@@ -152,15 +153,16 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
     }
 
     private void saveForecastToDB(DailyForecast data) {
-        if (!dbHelper.isDataAlreadyExist("Denpasar")) {
-            //data forecast denpasar not available on db, insert new
+        if (!dbHelper.isDataAlreadyExist(cityTarget)) {
+            //data forecast not available on db, insert new
             for (ListItem item : data.getList()) {
                 dbHelper.saveForecast(data.getCity(), item);
             }
         } else {
-            //data forecast denpasar already exist on db, update it with brand new data
+            //data forecast already exist on db, update it with brand new data
+            dbHelper.deleteForUpdate(cityTarget);
             for (ListItem item : data.getList()) {
-                dbHelper.updateData(data.getCity(), item);
+                dbHelper.saveForecast(data.getCity(), item);
             }
         }
     }
@@ -187,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
             forecastData.add(item);
         }
         forecastListAdapter.notifyDataSetChanged();
+        forecastListAdapter.setClickListener(this);
         updateView("complete");
     }
 }

@@ -121,6 +121,11 @@ public class ForecastDBHelper extends SQLiteOpenHelper {
                     item.getWeather().get(0).setDescription(cursor.getString(cursor.getColumnIndex(ForecastContract.ForecastEntry.COLUMN_WEATHER_DESCRIPTION)));
                     item.getTemp().setMax(cursor.getDouble(cursor.getColumnIndex(ForecastContract.ForecastEntry.COLUMN_MAX_TEMP)));
                     item.getTemp().setMin(cursor.getDouble(cursor.getColumnIndex(ForecastContract.ForecastEntry.COLUMN_MIN_TEMP)));
+
+                    item.setHumidity(cursor.getInt(cursor.getColumnIndex(ForecastContract.ForecastEntry.COLUMN_HUMIDITY)));
+                    item.setPressure(cursor.getDouble(cursor.getColumnIndex(ForecastContract.ForecastEntry.COLUMN_PRESSURE)));
+                    item.setSpeed(cursor.getDouble(cursor.getColumnIndex(ForecastContract.ForecastEntry.COLUMN_WIND_SPEED)));
+
                     result.getList().add(item);
                 } while (cursor.moveToNext());
             }
@@ -151,38 +156,13 @@ public class ForecastDBHelper extends SQLiteOpenHelper {
         return total > 0;
     }
 
-    public void updateData(City city, ListItem data) {
+    public void deleteForUpdate(String city) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
-        cv.put(ForecastContract.ForecastEntry.COLUMN_CITY_ID, city.getId());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_CITY_NAME, city.getName());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_CITY_LATITUDE, city.getCoord().getLat());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_CITY_LONGITUDE, city.getCoord().getLon());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_EPOCH_TIME, data.getDt());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_MAX_TEMP, data.getTemp().getMax());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_MIN_TEMP, data.getTemp().getMin());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_PRESSURE, data.getPressure());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_HUMIDITY, data.getHumidity());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_WEATHER_ID, data.getWeather().get(0).getId());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_WEATHER_MAIN, data.getWeather().get(0).getMain());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_WEATHER_DESCRIPTION, data.getWeather().get(0).getDescription());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_WEATHER_ICON, data.getWeather().get(0).getIcon());
-        cv.put(ForecastContract.ForecastEntry.COLUMN_WIND_SPEED, data.getSpeed());
-
-        long result = db.update(ForecastContract.ForecastEntry.TABLE_NAME,
-                cv,
+        db.delete(
+                ForecastContract.ForecastEntry.TABLE_NAME,
                 ForecastContract.ForecastEntry.COLUMN_CITY_NAME + " = ?",
-                new String[]{city.getName()}
+                new String[]{city}
         );
-
-        db.execSQL("UPDATE " + ForecastContract.ForecastEntry.TABLE_NAME +
-                        " SET " + ForecastContract.ForecastEntry.COLUMN_TIMESTAMP + "=(DATETIME(CURRENT_TIMESTAMP, 'LOCALTIME'))" +
-                        " WHERE " + ForecastContract.ForecastEntry.COLUMN_CITY_NAME + "=?",
-                new String[]{city.getName()});
-
-        Log.i(TAG, "update result -> " + result);
-
         db.close();
     }
 }
