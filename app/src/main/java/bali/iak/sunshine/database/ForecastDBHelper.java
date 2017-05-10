@@ -112,7 +112,6 @@ public class ForecastDBHelper extends SQLiteOpenHelper {
                     Temp temp = new Temp();
 
                     ListItem item = new ListItem();
-                    //item.getWeather().add(weatherItem);
                     item.setWeather(listWeatherItems);
                     item.setTemp(temp);
 
@@ -142,10 +141,12 @@ public class ForecastDBHelper extends SQLiteOpenHelper {
 
     public boolean isDataAlreadyExist(String city) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(ForecastContract.ForecastEntry.TABLE_NAME,
+        Cursor cursor = db.query(
+                true,
+                ForecastContract.ForecastEntry.TABLE_NAME,
                 null,
-                ForecastContract.ForecastEntry.COLUMN_CITY_NAME + "=?",
-                new String[]{city},
+                ForecastContract.ForecastEntry.COLUMN_CITY_NAME + " LIKE ?",
+                new String[]{"%" + city + "%"},
                 null,
                 null,
                 null,
@@ -158,11 +159,12 @@ public class ForecastDBHelper extends SQLiteOpenHelper {
 
     public void deleteForUpdate(String city) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(
-                ForecastContract.ForecastEntry.TABLE_NAME,
-                ForecastContract.ForecastEntry.COLUMN_CITY_NAME + " = ?",
-                new String[]{city}
-        );
+        final String sql = "DELETE FROM "
+                + ForecastContract.ForecastEntry.TABLE_NAME
+                + " WHERE "
+                + ForecastContract.ForecastEntry.COLUMN_CITY_NAME
+                + " LIKE '%" + city + "%';";
+        db.execSQL(sql);
         db.close();
     }
 }
