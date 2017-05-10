@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <EditTextPreference
+        android:defaultValue="@string/pref_location_default"
+        android:inputType="text"
+        android:key="@string/pref_location_key"
+        android:singleLine="true"
+        android:title="@string/pref_location_label" />
+
     <ListPreference
         android:defaultValue="@string/pref_units_metric"
         android:entries="@array/pref_units_options"
@@ -9,9 +16,9 @@
         android:title="@string/pref_units_label" />
 
     <CheckBoxPreference
-        android:title="Weather Notifications"
         android:defaultValue="false"
-        android:summaryOn="Enabled"
+        android:key="show_notification"
         android:summaryOff="Disabled"
-        android:key="show_notification"/>
+        android:summaryOn="Enabled"
+        android:title="Weather Notifications" />
 </PreferenceScreen>

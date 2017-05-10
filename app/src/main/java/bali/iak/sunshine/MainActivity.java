@@ -1,9 +1,11 @@
 package bali.iak.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,23 +35,23 @@ import bali.iak.sunshine.model.ListItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements OnclickListener {
+public class MainActivity extends AppCompatActivity implements
+        OnclickListener {
 
     private final static String TAG = MainActivity.class.getSimpleName();
-    private static final String cityTarget = "Denpasar";
-
     // TES TES
     @BindView(R.id.rv_forecast)RecyclerView rvForecast;
     @BindView(R.id.pb_forecast)
     ProgressBar pb;
     @BindView(R.id.tv_error)
     TextView errorView;
-
+    private String cityTarget;
     private ForecastListAdapter forecastListAdapter;
     private List<ListItem> forecastData = new ArrayList<>();
     private Gson gson = new Gson();
     private ForecastDBHelper dbHelper;
     private DailyForecast dailyForecast;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,53 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
             toolbar.setElevation(0);
         }
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        cityTarget = sharedPreferences.getString(
+                this.getString(R.string.pref_location_key),
+                this.getString(R.string.pref_location_default)
+        );
+
         setupData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        if (sharedPreferences == null) {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        }
+
+        Log.d(TAG, "sp ->" + sharedPreferences.getString(
+                this.getString(R.string.pref_location_key),
+                this.getString(R.string.pref_location_default)
+        ));
+        Log.d(TAG, "citytarget-> " + cityTarget);
+
+        if (!(sharedPreferences.getString(
+                this.getString(R.string.pref_location_key),
+                this.getString(R.string.pref_location_default)
+        ).equals(cityTarget))) {
+            cityTarget = sharedPreferences.getString(
+                    this.getString(R.string.pref_location_key),
+                    this.getString(R.string.pref_location_default)
+            );
+            Log.d(TAG, "cityTarget -> " + cityTarget);
+
+            getData();
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     private void setupData(){
@@ -138,8 +186,6 @@ public class MainActivity extends AppCompatActivity implements OnclickListener {
         int id = item.getItemId();
         if(id == R.id.action_settings){
             startActivity(new Intent(MainActivity.this,SettingsActivity.class));
-            /*dailyForecast = dbHelper.getSavedForecast("Denpasar");
-            showDataFromDB(dailyForecast);*/
         }
         return super.onOptionsItemSelected(item);
     }
