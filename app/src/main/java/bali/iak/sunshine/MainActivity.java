@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.tv_error)
     TextView errorView;
     private String cityTarget;
+    private String units;
+    private boolean isNeedRefresh = false;
     private ForecastListAdapter forecastListAdapter;
     private List<ListItem> forecastData = new ArrayList<>();
     private Gson gson = new Gson();
@@ -69,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements
                 this.getString(R.string.pref_location_key),
                 this.getString(R.string.pref_location_default)
         );
+        units = sharedPreferences.getString(
+                this.getString(R.string.pref_units_key),
+                this.getString(R.string.pref_units_metric)
+        );
 
         setupData();
     }
@@ -86,7 +92,12 @@ public class MainActivity extends AppCompatActivity implements
                 this.getString(R.string.pref_location_default)
         ));
         Log.d(TAG, "citytarget-> " + cityTarget);
+        if (preferencesChecker()) {
+            getData();
+        }
+    }
 
+    private boolean preferencesChecker() {
         if (!(sharedPreferences.getString(
                 this.getString(R.string.pref_location_key),
                 this.getString(R.string.pref_location_default)
@@ -97,9 +108,23 @@ public class MainActivity extends AppCompatActivity implements
             );
             Log.d(TAG, "cityTarget -> " + cityTarget);
 
-            getData();
+            //getData();
+            isNeedRefresh = true;
         }
 
+        if (!(sharedPreferences.getString(
+                this.getString(R.string.pref_units_key),
+                this.getString(R.string.pref_units_metric)
+        ).equals(units))) {
+            units = sharedPreferences.getString(
+                    this.getString(R.string.pref_units_key),
+                    this.getString(R.string.pref_units_metric)
+            );
+
+            //getData();
+            isNeedRefresh = true;
+        }
+        return isNeedRefresh;
     }
 
     @Override
@@ -126,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements
         updateView("loading");
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=16&appid=83003ca00bb8eec11d7976f5ee0282fd&units=metric&q=" + cityTarget;
+        final String url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=16&appid=83003ca00bb8eec11d7976f5ee0282fd&units=" + units + "&q=" + cityTarget;
 
         StringRequest request = new StringRequest(
                 Request.Method.GET,
